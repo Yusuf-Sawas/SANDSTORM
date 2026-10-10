@@ -1,7 +1,7 @@
-# SANDSTORM Core Initialization
-def start_engine():
-    print("SANDSTORM Mobile AI Workspace is Active!")
+# SANDSTORM AI Workspace
+def main():
+    print("SANDSTORM is active!")
 
-    if __name__ == "__main__":
-        start_engine()
-        
+if __name__ == "__main__":
+    main()
+    
