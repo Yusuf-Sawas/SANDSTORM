@@ -1,47 +1,81 @@
 # ZAVIQ
-ZAVIQ is a phone-first smart development workspace. the long-term vision is project and file management, architecture planning, sourced technical research, error diagnosis, patch review, and export preparation.
-this repository is at an early stage. It currently contains one small, real workflow:
+
+ZAVIQ is a phone-first smart development workspace. The long-term vision is project and file management, architecture planning, sourced technical research, error diagnosis, patch review, and export preparation.
+
+This repository is at an early stage. It currently contains one small, real workflow:
+
 **Dune planning workflow powered by an LLM**
+
 ```
-prompt -> input validation -> real model request -> JSON -> pydantic validation -> saved JSON artifact
+prompt -> input validation -> real model request -> JSON -> Pydantic validation -> saved JSON artifact
 ```
-it is not a multi-agent system and it is not autonomous. the model is asked once for a structured plan, the result is validation, and the result is saved. Nothing the model suggests is executed or created on disk.
+
+It is not a multi-agent system and it is not autonomous. The model is asked once for a structured plan, the result is validated, and the result is saved. Nothing the model suggests is executed or created on disk.
 
 ## Scope of this stage
 
-Bulit:
-- Python package `zaviq` (schemas, model client layer, Dune worklow, command-line entry point).
-- Offline tests that need no network and no API Key.
-- Github Actions: automatic offline tests, plus a manual live run.
+Built:
+- Python package `zaviq` (schemas, model client layer, Dune workflow, command-line entry point).
+- Offline tests that need no network and no API key.
+- GitHub Actions: automatic offline tests, plus a manual live run.
 
-Not built Yet:
-- Fixer and Scout agnet.
+Not built yet:
+- Fixer and Scout agents.
 - Any user interface.
 - A permanent API or server.
-- Database, hosting, deployment
+- Database, hosting, deployment.
 
 ## Offline tests vs. live model call
 
-- **Offline tests**
-ests_dune.py`) use a fake model client. They make no network calls and use no API key. Test data is fake and exists only inside the tests. Passing tests show that validation and error handling work. they do not show that a real model produces good plans.
-- **Live run** is a manual Github Actions run that calls the real Gemini API with your key. only this proves the model integration works. Access to the Gemini API depends on your account, region, and model. It is not assumed.
+- **Offline tests** (`tests/test_dune.py`) use a fake model client. They make no network calls and use no API key. Test data is fake and exists only inside the tests. Passing tests show that validation and error handling work. They do not show that a real model produces good plans.
+- **Live run** is a manual GitHub Actions run that calls the real Gemini API with your key. Only this proves the model integration works. Access to the Gemini API depends on your account, region, and model. It is not assumed.
 
-## One-time setup on Github (works from a phone)
+## One-time setup on GitHub (works from a phone)
 
-if you do not see the repository Settings tab, open the repository in your browser with "Desktop site" enabled.
+If you do not see the repository Settings tab, open the repository in your browser with "Desktop site" enabled.
 
-1. repository -> Settings -> Secrets and variables -> Actions.
-2. Tab **Secrets** -> New repository secret. Name: `GEMINI_API_KEY`. Paste your key into GitHub's from only. never put it in code, README, issues, chats, or workflow input.
-3. Tab **Variables** -> New repository variable. Name: `GEMINI_MODEL`. Value: a model name that your own account can actually use (check it in Google Ai Studio). Do not guess a name.
+1. Repository -> Settings -> Secrets and variables -> Actions.
+2. Tab **Secrets** -> New repository secret. Name: `GEMINI_API_KEY`. Paste your key into GitHub's form only. Never put it in code, README, issues, chats, or workflow inputs.
+3. Tab **Variables** -> New repository variable. Name: `GEMINI_MODEL`. Value: a model name that your own account can actually use (check it in Google AI Studio). Do not guess a name.
 
-## Run the tests form your phone
+## Run the tests from your phone
 
 1. Commit or push any change to the repository.
 2. Open the **Actions** tab -> the latest **ZAVIQ checks** run.
-3. the job `tests` should be green. It uses no secrets.
+3. The job `tests` should be green. It uses no secrets.
 
-## Run the live model tests manually
+## Run the live model test manually
 
-1. Actions tab -> **ZAVIQ chacks** ->> **Run workflow**.
+1. Actions tab -> **ZAVIQ checks** -> **Run workflow**.
 2. Choose branch `main`, type a general, non-sensitive project idea in `prompt`, and run.
-3. When the job `live-dune-run` succeeds, open the run page and download the artiface `dune-plan`. It is a zip file co
+3. When the job `live-dune-run` succeeds, open the run page and download the artifact `dune-plan`. It is a zip file containing `outputs/dune-plan.json`.
+4. If the run fails, no artifact is uploaded and the job log shows a short error message.
+
+## Security notes
+
+- Workflow inputs, logs, and artifacts are not a place for secrets. In a public repository, treat them as public.
+- The API key lives only in GitHub Secrets and is read from the environment variable `GEMINI_API_KEY`. The model name is read from `GEMINI_MODEL`.
+- The live run never starts automatically (not on push, not on pull request) and never writes to the repository.
+
+## Command line (what the workflow runs)
+
+```
+python -m zaviq.cli --prompt-file INPUT_PATH --output OUTPUT_PATH
+```
+
+## Limitations
+
+- No interface, no permanent API, no Fixer, no Scout.
+- GitHub Actions is not a server. It is used only for tests and short manual runs.
+- Plan quality depends on the model and the prompt. The output is validated for structure, not for correctness.
+
+## Status
+
+- Offline tests on GitHub Actions: not yet verified.
+- Live model integration: not yet verified.
+
+Update this section only after you have seen a green test run or a real artifact.
+
+## No promises
+
+This project makes no claim about prizes, program acceptance, or grants.
