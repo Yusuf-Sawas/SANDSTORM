@@ -1,6 +1,6 @@
 """Data models for the Dune planning workflow.
 
-the output models stay plain on purpose: the same classes are sent to Gemini
+The output models stay plain on purpose: the same classes are sent to Gemini
 as the response schema, so they avoid features that schema conversion may not
 support. Safety rules live in validators, which run on the parsed result.
 
@@ -32,10 +32,39 @@ class DuneRequest(BaseModel):
 
     prompt: str = Field(min_length=1, max_length=MAX_PROMPT_CHARS)
 
+    @field_validator("prompt")
+    @classmethod
+    def prompt_is_usable(cls, value: str) -> str:
+        if "\x00" in value:
+            raise ValueError("prompt must not contain NUL characters")
+        return _non_blank(value, "prompt")
+
+
+class ArchitectureComponent(BaseModel):
+    """One part of the proposed system and its responsibility."""
+
+    name: str
+    responsibility: str
+
+
+class Milestone(BaseModel):
+    """A stage of work, its tasks, and the checks that show it is done."""
+
+    name: str
+    tasks: list[str]
+    acceptance_criteria: list[str]
+
+
+class ProposedFile(BaseModel):
+    """A suggested file path. Suggestions are text only; nothing is created on disk."""
+
+    path: str
+    purpose: str
+
     @field_validator("path")
     @classmethod
     def path_is_safe_and_relative(cls, value: str) -> str:
-        candidate = vlaue.strip()
+        candidate = value.strip()
         if not candidate:
             raise ValueError("path must not be empty")
         if "\\" in candidate or "\x00" in candidate:
@@ -50,8 +79,8 @@ class DuneRequest(BaseModel):
         return candidate
 
 
-class Duneplan(BaseModel):
-    """the structured plan the model must return. It is validated before anything is saved."""
+class DunePlan(BaseModel):
+    """The structured plan the model must return. It is validated before anything is saved."""
 
     summary: str
     assumptions: list[str]
@@ -63,12 +92,12 @@ class Duneplan(BaseModel):
 
     @field_validator("summary")
     @classmethod
-    def summary_is_present(cls, value: str) -> str)
+    def summary_is_present(cls, value: str) -> str:
         return _non_blank(value, "summary")
 
     @field_validator("milestones")
     @classmethod
     def at_least_one_milestone(cls, value: list[Milestone]) -> list[Milestone]:
         if not value:
-            raise ValueError("a plan least one milestone")
+            raise ValueError("a plan needs at least one milestone")
         return value
