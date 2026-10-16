@@ -22,7 +22,8 @@ Not built Yet:
 
 ## Offline tests vs. live model call
 
-- **Offline tests** (`tests/tsets_dune.py`) use a fake model client. They make no network calls and use no API key. Test data is fake and exists only inside the tests. Passing tests show that validation and error handling work. they do not show that a real model produces good plans.
+- **Offline tests**
+ests_dune.py`) use a fake model client. They make no network calls and use no API key. Test data is fake and exists only inside the tests. Passing tests show that validation and error handling work. they do not show that a real model produces good plans.
 - **Live run** is a manual Github Actions run that calls the real Gemini API with your key. only this proves the model integration works. Access to the Gemini API depends on your account, region, and model. It is not assumed.
 
 ## One-time setup on Github (works from a phone)
@@ -43,34 +44,4 @@ if you do not see the repository Settings tab, open the repository in your brows
 
 1. Actions tab -> **ZAVIQ chacks** ->> **Run workflow**.
 2. Choose branch `main`, type a general, non-sensitive project idea in `prompt`, and run.
-3. When the job `live-dune-run` succeeds, open the run page and download the artiface `dune-plan`. It is a zip file containing `outputs/dune-plan.json`.
-4. if the run fails, no artifact is uploaded and the job log shows a short error message.
-
-## Security notes
-
-- workflow input, logs and artifacts are not a place for secrets. In a public repository, treat them as public.
-- the API key lives only in GitHub Secrets and is read from the environment variable `GEMINI_API_KEY`. the model name is read from `GEMINI_MODEL`.
-- the live run never starts automatically (not on push, not on pull request) and never writes to the repository.
-
-## Command line (what the worklow runs)
-
-```
-Python -m zaviq.cli --prompt-file INPUT_PATH --output OUTPUT_PATH
-```
-
-## Limitations
-
-- No interface, no permanent API, no Fixer, no Scout.
-- GitHub Actins is not a server. It is used only for tests and short manual runs.
-- Plan quality depends on the model and the prompt. The output is validated for structura, not for correctness.
-
-## Status
-
-- Offline tests on GitHub Actions: not yet verified.
-- Live model integration: not yet verified.
-
-Updata this section only after you have seen a green test run or a real artifact.
-
-## No promises
-
-this project makes no claim about prizes, program acceptance, or grants.
+3. When the job `live-dune-run` succeeds, open the run page and download the artiface `dune-plan`. It is a zip file co
