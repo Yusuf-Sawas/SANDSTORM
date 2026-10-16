@@ -1,0 +1,34 @@
+# Secrets and local environment files
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches and build output
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generated outputs and temporary files
+outputs/
+*.tmp
+*.log
+
+# OS files
+.DS_Store
